@@ -60,14 +60,14 @@ selected_neighbors = st.multiselect(
 
 is_bundle_ready = len(selected_neighbors) == adjacent
 
-# HTML/CSS를 이용한 에러 없는 깔끔한 형광펜 주머니 시각화
+# HTML/CSS를 이용한 좌석 배치 미리보기
 st.write("### 🪑 좌석 배치 미리보기")
 visual_cols = st.columns(total)
 
 for i, person in enumerate(people_list):
     with visual_cols[i]:
         if person in selected_neighbors:
-            # 이웃은 눈에 띄는 핑크색 형광펜 스타일 박스로 감싸기
+            # 이웃은 눈에 띄는 핑크색 형광펜 스타일 박스로 감싸기 (옵션명 고침: unsafe_allow_html=True)
             st.markdown(
                 f"""
                 <div style="background-color: #FFE6EC; border: 2px dashed #FF3366; 
@@ -76,10 +76,10 @@ for i, person in enumerate(people_list):
                     <small style="color: #FF3366;">(이웃 그룹)</small>
                 </div>
                 """, 
-                unsafe_html=True
+                unsafe_allow_html=True
             )
         else:
-            # 일반 사람은 편안한 초록색 박스
+            # 일반 사람은 편안한 초록색 박스 (옵션명 고침: unsafe_allow_html=True)
             st.markdown(
                 f"""
                 <div style="background-color: #E6F9E6; border: 1px solid #28A745; 
@@ -88,7 +88,7 @@ for i, person in enumerate(people_list):
                     <small style="color: #666;">(일반)</small>
                 </div>
                 """, 
-                unsafe_html=True
+                unsafe_allow_html=True
             )
 
 st.write("") # 공백 추가
