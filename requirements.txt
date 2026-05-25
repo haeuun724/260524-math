@@ -1,2 +1,1 @@
-metaplotlib
-streamlit
+pip install matplotlib
