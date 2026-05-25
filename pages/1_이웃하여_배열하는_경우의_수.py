@@ -45,7 +45,7 @@ with col2:
     st.metric(label="이웃할 인원 수 (K)", value=f"{adjacent} 명")
 st.info(f"문제: {total}명의 사람을 일렬로 앉힐 때, 특정한 {adjacent}명이 서로 이웃하게 앉는 경우의 수를 구하세요.")
 
-# --- [4] 1.5단계: 형광펜 스타일이 적용된 시각화 ---
+# --- [4] 1.5단계: 시각화 ---
 st.markdown("---")
 st.subheader("🕵️‍♂️ 1.5단계 [아이디어 탐색]: 이웃할 사람들을 직접 묶어봅시다!")
 st.write(f"아래 명단에서 이웃하게 만들고 싶은 사람을 딱 **{adjacent}명**만 선택해 보세요.")
@@ -60,14 +60,14 @@ selected_neighbors = st.multiselect(
 
 is_bundle_ready = len(selected_neighbors) == adjacent
 
-st.write("### 🪑 좌석 배치 미리보기 (형광펜 강조)")
+st.write("### 🪑 좌석 배치 미리보기")
 
 seat_cols = st.columns(total)
 
 for i, person in enumerate(people_list):
     with seat_cols[i]:
         if person in selected_neighbors:
-            # 이웃 그룹: 안전한 인라인 스타일로 분홍색 형광펜 패딩 박스 구현 (에러 없음)
+            # 이웃 그룹: 분홍색 형광펜 패딩 박스
             with st.container(border=True):
                 st.markdown(
                     f"""
@@ -80,7 +80,7 @@ for i, person in enumerate(people_list):
                     unsafe_allow_html=True
                 )
         else:
-            # 일반 사람: 연두색의 깔끔하고 차분한 박스 구현
+            # 일반 사람: 연두색 박스
             with st.container(border=True):
                 st.markdown(
                     f"""
@@ -100,13 +100,13 @@ else:
     st.warning(f"⚠️ 정확히 {adjacent}명을 선택해야 그룹이 올바르게 생성됩니다.")
 
 
-# --- [5] 🧮 풀이 보조 만능 계산기 팩 ---
+# --- [5] 🧮 풀이 보조 만능 계산기 팩 (아이콘 삭제 완료) ---
 st.markdown("")
 with st.expander("🧮 풀이를 위한 보조 계산기 열기 (팩토리얼 / 곱셈)", expanded=False):
     calc_col1, calc_col2 = st.columns(2)
     
     with calc_col1:
-        st.markdown("**ℹ️ 팩토리얼 계산기**")
+        st.markdown("**팩토리얼 계산기**")
         fact_input = st.text_input("n! 형식으로 입력 (예: 5!)", key="fact_calc_in")
         if fact_input:
             clean_fact = fact_input.replace(" ", "").lower()
@@ -117,7 +117,7 @@ with st.expander("🧮 풀이를 위한 보조 계산기 열기 (팩토리얼 / 
                 st.warning("올바른 형식으로 입력해 주세요. (예: 6!)")
                 
     with calc_col2:
-        st.markdown("**ℹ️ 곱셈 계산기**")
+        st.markdown("**곱셈 계산기**")
         mul_input = st.text_input("n x m 형식으로 입력 (예: 24 x 6)", key="mul_calc_in")
         if mul_input:
             clean_mul = mul_input.replace(" ", "").replace("×", "x").replace("*", "x").lower()
