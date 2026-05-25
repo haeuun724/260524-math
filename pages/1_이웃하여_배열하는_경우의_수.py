@@ -8,7 +8,7 @@ st.title("순열 문제 풀이 - 이웃하여 배열하는 경우의 수")
 
 # --- [1] 세션 상태 초기화 ---
 if "total_people" not in st.session_state or st.session_state.total_people == 0:
-    st.session_state.total_people = random.randint(5, 8)  # 최대 8명으로 깔끔하게 제한
+    st.session_state.total_people = random.randint(5, 8)  # 최대 8명 제한
     st.session_state.adjacent_count = random.randint(2, st.session_state.total_people - 2) # 이웃할 인원
     st.session_state.step = 2
     st.session_state.step2_correct = False
@@ -62,18 +62,15 @@ is_bundle_ready = len(selected_neighbors) == adjacent
 
 st.write("### 🪑 좌석 배치 미리보기")
 
-# HTML을 쓰지 않고 스트림릿 순정 레이아웃(st.columns)과 상자(st.container)로 시각화 구현
 seat_cols = st.columns(total)
 
 for i, person in enumerate(people_list):
     with seat_cols[i]:
         if person in selected_neighbors:
-            # 이웃은 빨간색 에러 스타일 상자로 강조하여 묶음 표현
             with st.container(border=True):
                 st.markdown(f"### 💗\n**{person}**")
-                st.caption("이웃 묶음")
+                st.caption("이웃 그룹")
         else:
-            # 일반 사람은 기본 회색/초록색 톤 상자 표현
             with st.container(border=True):
                 st.markdown(f"### 👤\n{person}")
                 st.caption("일반")
@@ -81,9 +78,9 @@ for i, person in enumerate(people_list):
 st.write("") 
 
 if is_bundle_ready:
-    st.success(f"💡 주머니 완성! 주머니(1개) + 나머지 일반 사람({total - adjacent}명) = 총 {block_count}개의 덩어리가 됩니다.")
+    st.success(f"💡 조건 확인 완료: 이웃 그룹(1묶음)과 나머지 일반 사람({total - adjacent}명)의 배열 관계를 생각해보세요.")
 else:
-    st.warning(f"⚠️ 정확히 {adjacent}명을 선택해야 형광펜 주머니가 올바르게 묶입니다.")
+    st.warning(f"⚠️ 정확히 {adjacent}명을 선택해야 그룹이 올바르게 생성됩니다.")
 
 
 # --- [5] 🧮 풀이 보조 만능 계산기 팩 ---
@@ -120,8 +117,8 @@ with st.expander("🧮 풀이를 위한 보조 계산기 열기 (팩토리얼 / 
 
 # --- [6] 2단계 UI: 외부 블록 배열하기 ---
 st.markdown("---")
-st.header("2단계: 묶음을 하나의 블록으로 보고 배열하기")
-st.write(f"주머니를 포함하여 총 **{block_count}개**의 덩어리를 일렬로 배열하는 경우의 수를 구하세요.")
+st.header("2단계: 전체 배열 경우의 수 구하기")
+st.write("이웃한 사람들을 한 묶음으로 봤을 때 전체를 일렬로 배열하는 경우의 수를 구하세요.")
 
 if not st.session_state.step2_correct:
     col_in1, col_in2 = st.columns(2)
@@ -136,15 +133,15 @@ if not st.session_state.step2_correct:
             st.session_state.step = 3
             st.rerun()
         else:
-            st.error("오답입니다. 보조 계산기를 활용해 식(n!)과 결과값을 다시 확인하세요.")
+            st.error("오답입니다. 묶음의 총 개수를 고려하여 식과 결과값을 다시 확인하세요.")
 else:
     st.success(f"✔️ 2단계 정답 통과: `{block_count}!` = {step2_expected_value:,}")
 
 # --- [7] 3단계 UI: 묶음 내부 순서 정하기 ---
 if st.session_state.step >= 3:
     st.markdown("---")
-    st.header("3단계: 이웃하는 이들끼리 순서 변경하기")
-    st.write(f"주머니 내부의 **{adjacent}명**이 안에서 자리를 바꾸는 경우의 수를 구하세요.")
+    st.header("3단계: 이웃한 묶음 내부의 경우의 수 구하기")
+    st.write("이웃한 사람들끼리 자리를 바꾸는 경우의 수를 구하세요.")
 
     if not st.session_state.step3_correct:
         col_in1, col_in2 = st.columns(2)
@@ -159,7 +156,7 @@ if st.session_state.step >= 3:
                 st.session_state.step = 4
                 st.rerun()
             else:
-                st.error("오답입니다. 주머니 안의 인원수를 기준으로 다시 입력하세요.")
+                st.error("오답입니다. 이웃한 그룹의 인원수를 기준으로 다시 입력하세요.")
     else:
         st.success(f"✔️ 3단계 정답 통과: `{adjacent}!` = {step3_expected_value:,}")
 
@@ -167,7 +164,7 @@ if st.session_state.step >= 3:
 if st.session_state.step >= 4:
     st.markdown("---")
     st.header("4단계: 전체 경우의 수 구하기")
-    st.write(f"외부 배열({step2_expected_value:,}가지)과 내부 배열({step3_expected_value:,}가지)을 곱해 최종 정답을 구하세요.")
+    st.write(f"외부 배열({step2_expected_value:,}가지)과 내부 배열({step3_expected_value:,}가지)의 조건을 결합하여 최종 정답을 구하세요.")
 
     if not st.session_state.final_correct:
         final_val = st.text_input("최종 정답 숫자로 입력", key="final_val_input")
@@ -176,7 +173,7 @@ if st.session_state.step >= 4:
                 st.session_state.final_correct = True
                 st.rerun()
             else:
-                st.error("오답입니다. 보조 곱셈 계산기를 다시 이용해 보세요.")
+                st.error("오답입니다. 두 조건이 동시에 일어나는 경우이므로 알맞은 연산을 해보세요.")
     else:
         st.balloons()
         st.success(f"🎉 정답입니다! 최종 경우의 수: {step2_expected_value:,} × {step3_expected_value:,} = {final_expected_value:,} 가지")
