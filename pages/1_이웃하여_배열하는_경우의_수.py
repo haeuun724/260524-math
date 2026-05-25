@@ -283,4 +283,16 @@ if st.session_state.step >= 4:
 st.markdown("---")
 st.caption(
     "*이 페이지는 단계별로 이웃하여 배열하는 경우의 수를 학습하도록 설계되었습니다.*"
-)
+) st.subheader("🕵️‍♂️ 결과 탐색 도구: 실제 배치를 확인해봅시다")
+st.write(f"우리가 구한 {final_expected_value:,}가지의 경우 중 하나를 선택해서 시각적으로 확인해 보세요.")
+
+# --- 핵심 대안: 슬라이더를 통해 몇 번째 경우가 궁금한지 입력받는 부분 ---
+selected_nth = st.slider("확인하고 싶은 배치 번호를 선택하세요:", 
+                        1, final_expected_value, 
+                        value=random.randint(1, final_expected_value))
+
+# ... (중략: 선택한 번호의 배치 상태를 수학적으로 계산하는 로직) ...
+
+# --- 입력한 번호에 맞는 '단 하나의 배치'를 시각화하여 보여주는 부분 ---
+fig = plot_single_arrangement(total, adjacent, current_block_order, current_internal_order, selected_nth)
+st.pyplot(fig)
