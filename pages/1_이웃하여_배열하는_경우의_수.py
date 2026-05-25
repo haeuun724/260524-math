@@ -6,6 +6,11 @@ import streamlit as st
 st.set_page_config(page_title="순열 문제 풀이", layout="wide")
 st.title("순열 문제 풀이 - 이웃하여 배열하는 경우의 수")
 
+# 한글 폰트 깨짐 방지 설정
+import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'sans-serif'
+plt.rcParams['axes.unicode_minus'] = False
+
 # --- [1] 세션 상태 초기화 ---
 if "total_people" not in st.session_state or st.session_state.total_people == 0:
     st.session_state.total_people = random.randint(5, 20)  # 총인원수 범위 최대 20명
@@ -62,7 +67,7 @@ is_bundle_ready = len(selected_neighbors) == adjacent
 
 st.write("### 🪑 좌석 배치 미리보기")
 
-# 깨짐 방지: 스트림릿 내부 컨테이너와 CSS 주입 방식으로 가로 스크롤 구현
+# 깨짐 방지 핵심: CSS 스타일 선언부 (따옴표 규칙 엄수)
 st.markdown(
     """
     <style>
@@ -82,7 +87,8 @@ st.markdown(
         padding: 12px;
         border-radius: 10px;
         text-align: center;
-        min-width: 90px;
+        min-width: 95px;
+        vertical-align: top;
     }
     .seat-box-normal {
         display: inline-block;
@@ -91,34 +97,49 @@ st.markdown(
         padding: 12px;
         border-radius: 10px;
         text-align: center;
-        min-width: 90px;
+        min-width: 95px;
+        vertical-align: top;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# 인원들이 들어갈 스크롤 박스를 안전하게 한 줄로 조립
-container_html = '<div class="scroll-container">'
+# 깨짐 방지 해결책: f-string 대신 .format()을 사용하여 HTML을 안전하게 조립
+container_start = '<div class="scroll-container">'
+container_end = '</div>'
+
+# 각 좌석 상자를 담을 리스트
+seat_boxes = []
+
+# 정석적인 포맷팅 방식으로 따옴표 충돌 제거
+neighbor_html_template = """
+<div class="seat-box-neighbor">
+    <span style="color: #FF3366; font-weight: bold; font-size: 14px;">💗 {person_name}</span><br>
+    <small style="color: #FF3366; font-size: 11px;">(이웃 그룹)</small>
+</div>
+"""
+
+normal_html_template = """
+<div class="seat-box-normal">
+    <span style="color: #28A745; font-weight: bold; font-size: 14px;">👤 {person_name}</span><br>
+    <small style="color: #666; font-size: 11px;">(일반)</small>
+</div>
+"""
+
+# 리스트를 돌며 상자 조립
 for person in people_list:
     if person in selected_neighbors:
-        container_html += f"""
-        <div class="seat-box-neighbor">
-            <span style="color: #FF3366; font-weight: bold; font-size: 14px;">💗 {person}</span><br>
-            <small style="color: #FF3366; font-size: 11px;">(이웃 그룹)</small>
-        </div>
-        """
+        # 안전하게 .format()으로 변수 삽입
+        seat_boxes.append(neighbor_html_template.format(person_name=person))
     else:
-        container_html += f"""
-        <div class="seat-box-normal">
-            <span style="color: #28A745; font-weight: bold; font-size: 14px;">👤 {person}</span><br>
-            <small style="color: #666; font-size: 11px;">(일반)</small>
-        </div>
-        """
-container_html += '</div>'
+        seat_boxes.append(normal_html_template.format(person_name=person))
 
-# 최종 안전 출력
-st.markdown(container_html, unsafe_allow_html=True)
+# 모든 상자를 합치고 컨테이너로 감싸기
+final_container_html = container_start + "".join(seat_boxes) + container_end
+
+# 최후 안전 출력 (따옴표 이슈 없음)
+st.markdown(final_container_html, unsafe_allow_html=True)
 st.write("") 
 
 if is_bundle_ready:
