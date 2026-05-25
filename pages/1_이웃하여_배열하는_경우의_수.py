@@ -5,7 +5,6 @@ import streamlit as st
 
 PAGE_TITLE = "순열 문제 풀이 - 이웃하여 배열하는 경우의 수"
 
-st.set_page_config(page_title=PAGE_TITLE)
 st.title(PAGE_TITLE)
 
 if "total_people" not in st.session_state:
