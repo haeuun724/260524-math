@@ -45,7 +45,7 @@ with col2:
     st.metric(label="이웃할 인원 수 (K)", value=f"{adjacent} 명")
 st.info(f"문제: {total}명의 사람을 일렬로 앉힐 때, 특정한 {adjacent}명이 서로 이웃하게 앉는 경우의 수를 구하세요.")
 
-# --- [4] 1.5단계: 순정 기능을 이용한 시각화 ---
+# --- [4] 1.5단계: 형광펜 스타일이 적용된 시각화 ---
 st.markdown("---")
 st.subheader("🕵️‍♂️ 1.5단계 [아이디어 탐색]: 이웃할 사람들을 직접 묶어봅시다!")
 st.write(f"아래 명단에서 이웃하게 만들고 싶은 사람을 딱 **{adjacent}명**만 선택해 보세요.")
@@ -60,20 +60,37 @@ selected_neighbors = st.multiselect(
 
 is_bundle_ready = len(selected_neighbors) == adjacent
 
-st.write("### 🪑 좌석 배치 미리보기")
+st.write("### 🪑 좌석 배치 미리보기 (형광펜 강조)")
 
 seat_cols = st.columns(total)
 
 for i, person in enumerate(people_list):
     with seat_cols[i]:
         if person in selected_neighbors:
+            # 이웃 그룹: 안전한 인라인 스타일로 분홍색 형광펜 패딩 박스 구현 (에러 없음)
             with st.container(border=True):
-                st.markdown(f"### 💗\n**{person}**")
-                st.caption("이웃 그룹")
+                st.markdown(
+                    f"""
+                    <div style="background-color: #FFE6EC; border: 1px dashed #FF3366; 
+                                padding: 10px; border-radius: 5px; text-align: center;">
+                        <span style="color: #FF3366; font-weight: bold; font-size: 16px;">💗 {person}</span><br>
+                        <small style="color: #FF3366; font-weight: bold;">[이웃 그룹]</small>
+                    </div>
+                    """, 
+                    unsafe_allow_html=True
+                )
         else:
+            # 일반 사람: 연두색의 깔끔하고 차분한 박스 구현
             with st.container(border=True):
-                st.markdown(f"### 👤\n{person}")
-                st.caption("일반")
+                st.markdown(
+                    f"""
+                    <div style="background-color: #E6F9E6; padding: 10px; border-radius: 5px; text-align: center;">
+                        <span style="color: #28A745; font-weight: bold; font-size: 16px;">👤 {person}</span><br>
+                        <small style="color: #666;">일반</small>
+                    </div>
+                    """, 
+                    unsafe_allow_html=True
+                )
 
 st.write("") 
 
